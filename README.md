@@ -97,7 +97,7 @@ AetherViz Master 是一个基于 AI 的互动教育可视化工具，专注于�
 
 ```bash
 # 1. 克隆仓库
-git clone https://github.com/andyhuo520/aetherviz-master.git
+git clone https://github.com/luzwales/aetherviz-master.git
 cd aetherviz-master
 
 # 2. 启动本地服务器（任选一种）
@@ -296,8 +296,8 @@ git push origin feature/your-feature
 
 ### 贡献者
 
-<a href="https://github.com/andyhuo520/aetherviz-master/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=andyhuo520/aetherviz-master" />
+<a href="https://github.com/luzwales/aetherviz-master/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=luzwales/aetherviz-master" />
 </a>
 
 ---
