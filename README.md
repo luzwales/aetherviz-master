@@ -1,10 +1,11 @@
 # AetherViz Master
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-5.0-blue.svg" alt="Version">
+  <img src="https://img.shields.io/badge/version-5.1-blue.svg" alt="Version">
   <img src="https://img.shields.io/badge/license-MIT-green.svg" alt="License">
   <img src="https://img.shields.io/badge/Three.js-r134-orange.svg" alt="Three.js">
   <img src="https://img.shields.io/badge/Tailwind-v3.4+-cyan.svg" alt="Tailwind">
+  <img src="https://img.shields.io/badge/GeoGebra-Embedded-brightgreen.svg" alt="GeoGebra">
   <img src="https://img.shields.io/badge/SVG-Enabled-purple.svg" alt="SVG">
   <img src="https://img.shields.io/badge/AI-Powered-red.svg" alt="AI Powered">
 </p>
@@ -22,14 +23,14 @@
 
 ## 📖 项目简介
 
-AetherViz Master 是一个基于 AI 的互动教育可视化工具，专注于将抽象的教学概念转化为生动、直观的 3D 交互式网页。无论你是教师、学生还是教育内容创作者，只需输入一个主题，它就能为你生成一个完整的、可交互的教学页面。
+AetherViz Master 是一个基于 AI 的互动教育可视化工具，专注于将抽象的教学概念转化为生动、直观的交互式网页。无论你是教师、学生还是教育内容创作者，只需输入一个主题，它就能为你生成一个完整的、可交互的教学页面。
 
 ### 核心能力
 
-- **一键生成**：输入主题 → 自动生成 3D 交互网页
+- **一键生成**：输入主题 → 自动生成交互网页
 - **智能适配**：自动识别学科领域，匹配最佳配色和可视化方案
 - **零门槛使用**：无需编程基础，生成的 HTML 直接可用
-- **专业品质**：Three.js + SVG 混合渲染，60fps 流畅体验
+- **专业品质**：Three.js + SVG + GeoGebra 三引擎，60fps 流畅体验
 
 ---
 
@@ -47,21 +48,33 @@ AetherViz Master 是一个基于 AI 的互动教育可视化工具，专注于�
 - D3.js 数据驱动图表（可选）
 - 3D-2D 坐标实时同步
 
-### 3. 智能自动识别
+### 3. GeoGebra 动态几何图 🆕
+- 数学几何/函数主题自动路由到 GeoGebra
+- **真交互**：学生可拖动顶点、滑动参数，图形实时联动
+- `.ggb` 以 base64 内联，教案仍是**单个 HTML 文件**
+- **视窗用 contain-fit 控制**（`ggb_embed.js --view`）：框内元素保证可见、圆不变椭圆、随容器自适应
+- 内置 6 条中小学教案构造配方（勾股定理、三角形外心与重心、抛物线、单位圆、切线导数、相似三角形）
+- 附带 `scripts/ggb_embed.js` 命令行工具，可脱离 AI 单独把 `.ggb` 转成嵌入片段
+
+> 「勾股定理」「三角形的外心与内心」「抛物线的平移」这类主题，
+> 图形价值在于**拖一拖看变化**——手工用 Three.js 模拟几何约束既慢又不可靠，
+> 所以直接用 GeoGebra（几何动态图的事实标准）。
+
+### 4. 智能自动识别
 
 | 识别维度 | 说明 |
 |----------|------|
 | **学科识别** | 物理/化学/生物/数学/天文/编程，自动切换配色主题 |
-| **渲染方案** | 根据关键词自动选择 Three.js / SVG / 混合模式 |
+| **渲染方案** | 根据关键词自动选择 Three.js / SVG / GeoGebra / 混合模式 |
 | **语言适配** | 自动检测中文/英文，输出对应语言 |
 
-### 4. 现代化 UI 设计
+### 5. 现代化 UI 设计
 - 玻璃拟态（Glassmorphism）风格
 - 赛博教育风 + 霓虹强调色
 - 响应式布局，适配桌面/平板/手机
 - 侧边栏 + 控制面板 + HUD 数据展示
 
-### 5. 完整教学功能
+### 6. 完整教学功能
 - 学习目标（可勾选追踪）
 - KaTeX 数学公式实时渲染
 - 原理讲解（生动比喻，高中-大学水平）
@@ -76,6 +89,9 @@ AetherViz Master 是一个基于 AI 的互动教育可视化工具，专注于�
 
 - 现代浏览器（Chrome/Edge/Firefox/Safari）
 - 支持 WebGL
+- Node.js（仅在使用 `scripts/ggb_embed.js` 与生成 `.ggb` 时需要）
+
+> GeoGebra 模式需要**联网**加载 CDN 资源。内网机房场景请改用 `geogebra-geometry` 技能出静态 PNG 插图。
 
 ### 本地运行
 
@@ -112,6 +128,33 @@ claude
 
 系统将自动生成完整的 HTML 文件。
 
+### 命令行工具：`ggb_embed.js` 🆕
+
+数学主题会用到 `scripts/ggb_embed.js`。它把 `.ggb` 转成可直接粘进教案的 `<div> + <script>` 片段，
+`.ggb` 以 base64 内联，所以**教案仍然是单个 HTML 文件**，不需要附带 `.ggb`。
+
+```bash
+node scripts/ggb_embed.js --in fig.ggb --id ggbFig --height 420 \
+  --view -0.8,5.8,-0.8,3.8 --caption "三角形与外接圆"
+```
+
+| 参数 | 说明 |
+|------|------|
+| `--in <file.ggb>` | 必填，输入的 .ggb 文件 |
+| `--out <file>` | 把片段写入文件；css 仍打印到 stderr |
+| `--id <name>` | 宿主 div 的 id，默认 `ggb` |
+| `--height <80..2000>` | 图形 CSS 高度（像素），默认 `420` |
+| `--view x0,x1,y0,y1` | **必须可见的世界坐标内容框**，语义是 **contain-fit**（不是坐标轴上下限）。框内元素保证可见、圆不变椭圆、随容器尺寸自适应。负数值可直接写 |
+| `--caption <text>` | 图下方的说明文字 |
+| `--app <name>` | GeoGebra `appName`，默认 `classic`（**不要改成 `geometry`**，它会强制显示代数面板） |
+| `--json` | 输出 `{ok, input, id, height, view, app, ggbBytes, base64Bytes, deployJs, snippet, css}` |
+
+退出码：`0` 成功 / `1` 输入文件问题 / `2` 参数用法错误。
+
+> ⚠️ **不要给 `geogebra-file-generator` 的 `generate.js` 传 `--view`** —— 该参数实测会错位到
+> 看不见原点（它用 1200×800 计算缩放，却把 applet 实测尺寸写进文件，两者不同源）。
+> 视窗控制统一放在 `ggb_embed.js --view` 这一步。
+
 ---
 
 ## 📚 支持的主题领域
@@ -140,6 +183,9 @@ claude
 - 三角函数
 - 正弦函数图像
 - 概率分布
+- 三角形的外心与重心
+- 抛物线的平移与伸缩
+- 相似三角形
 
 ### 天文
 - 行星运动定律
@@ -160,6 +206,7 @@ claude
 | 技术 | 用途 | 版本 |
 |------|------|------|
 | Three.js | 3D 渲染引擎 | r134 |
+| GeoGebra | 动态几何/函数交互图（数学主题） | deployggb.js CDN |
 | Tailwind CSS | UI 样式框架 | v3.4+ |
 | KaTeX | 数学公式渲染 | 0.16.11 |
 | D3.js | 数据可视化（可选） | v7 |
@@ -171,10 +218,11 @@ claude
 ┌─────────────────────────────────────────────────────────────┐
 │                    主题输入分析                               │
 ├─────────────────────────────────────────────────────────────┤
-│  关键词检测                                                  │
-│  ├── 运动/粒子/分子/机械/天体  → 纯 Three.js 3D              │
-│  ├── 函数/图像/曲线/几何       → SVG 2D 图表                 │
-│  └── 牛顿/波动/能量/电磁      → Three.js + SVG 混合模式     │
+│  关键词检测（GeoGebra 优先级最高）                             │
+│  ├── 几何/函数/变换/轨迹/作图 → GeoGebra 动态交互图 🆕         │
+│  ├── 运动/粒子/分子/机械/天体 → 纯 Three.js 3D               │
+│  ├── 柱状图/饼图/折线图       → SVG 2D 图表                  │
+│  └── 牛顿/波动/能量/电磁      → Three.js + SVG 混合模式      │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -184,11 +232,14 @@ claude
 
 ```
 aetherviz-master/
-├── README.md                 # 项目说明文档
-├── LICENSE                   # MIT 许可证
-├── SKILL.md                  # Claude Skill 定义文件
-└── docs/
-    └── skill.md             # 技能详细文档
+├── README.md                       # 项目说明文档
+├── LICENSE                         # MIT 许可证
+├── SKILL.md                        # Claude Skill 定义文件
+├── scripts/
+│   └── ggb_embed.js                # .ggb → 可嵌入单文件 HTML 的片段生成器
+└── references/
+    ├── geogebra-embed.md           # GeoGebra 嵌入 API、踩坑记录、参数速查
+    └── geogebra-recipes.md         # 6 条中小学动态几何构造配方
 ```
 
 ---
@@ -202,14 +253,21 @@ aetherviz-master/
 2. 检测「运动」关键词 → Three.js 纯 3D 模式
 3. 生成：小球运动模拟 + 速度滑块 + 位移轨迹
 
-### 示例 2：三角函数
+### 示例 2：三角函数 🆕
 
 输入主题后，系统自动：
 1. 识别为「数学」学科 → 金黄渐变主题
-2. 检测「函数/图像」关键词 → SVG 模式
-3. 生成：函数波形 SVG 图表 + 参数滑块 + 实时绘制
+2. 命中 `ggbKeywords`（含「函数」）→ **GeoGebra 模式**（优先级高于 SVG）
+3. 生成：单位圆动态图 —— 学生拖动 θ 滑块，直观看到 sin/cos 投影线段的变化
 
-### 示例 3：波动与振动
+### 示例 3：三角形的外心与重心 🆕
+
+输入主题后，系统自动：
+1. 检测「几何/外心」关键词 → **GeoGebra 模式**
+2. 生成：可拖动顶点的三角形，外心 O 与重心 G 实时重算
+3. 侧边栏给出交互指引：「拖动顶点，观察两个心如何重新定位」
+
+### 示例 4：波动与振动
 
 输入主题后，系统自动：
 1. 识别为「物理」学科
@@ -256,10 +314,25 @@ MIT License - 详见 [LICENSE](LICENSE) 文件
 - [Tailwind CSS](https://tailwindcss.com/)
 - [KaTeX 数学公式](https://katex.org/)
 - [D3.js 数据可视化](https://d3js.org/)
+- [GeoGebra](https://www.geogebra.org/)
 
 ---
 
 ## 📝 更新日志
+
+### v5.1 (2026-10-15)
+- ✅ 新增 GeoGebra 动态几何图引擎（数学主题最高优先级路由）
+- ✅ 新增 `scripts/ggb_embed.js`：`.ggb` → base64 内联的单文件教案片段生成器
+- ✅ 新增 `--view x0,x1,y0,y1`（**contain-fit 语义**）：给一个必须可见的世界坐标内容框，
+  框内元素保证可见、圆不变椭圆、随容器尺寸自适应 —— 修掉「默认高度下负半轴元素被切掉」的真实缺陷
+- ✅ 新增 `references/geogebra-embed.md`：嵌入 API 实测契约与踩坑记录
+- ✅ 新增 `references/geogebra-recipes.md`：6 条中小学动态几何构造配方（全部已实测通过）
+- ✅ 明确 GeoGebra 模式的网络依赖边界（内网场景改走 geogebra-geometry 出静态 PNG）
+- ✅ 修掉 4 个真实缺陷：多图页面自触发重注入循环、看门狗误杀加载中的图、
+  缩小后无法恢复、`--view` 负数值被参数解析拒收
+- ✅ **文档驱动验收全通过**：用配方文档里写的命令本身生成 6 张图，真实浏览器加载后
+  逐条核对 —— `canvas=638x418`、代数面板不出现、无 fallback、内容框 `CONTAINS`、等轴比 `1.0000`；
+  640px 与 320px 两档容器共 12 例全部通过
 
 ### v5.0 (2026-02-22)
 - ✅ 新增 SVG + Three.js 混合渲染
